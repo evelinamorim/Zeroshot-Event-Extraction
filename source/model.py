@@ -32,6 +32,7 @@ class EventDetector():
 		else:
 			self.gpu_devices = None
 
+
 		# dirs
 		self.transformers_cache_dir = config.transformers_cache_dir
 		input_dir = eval(config.input_dir)
@@ -231,13 +232,16 @@ class EventDetector():
 
 			# Get the context
 			if srl_id:
-				srl_result = srl_id_results[srl_id]
-				srl_tokens = srl_result['words']
-				text_piece_tokens = [srl_tokens[i] for i, tag in enumerate(srl_result['tags']) if tag != 'O']
-				text_piece_token_ids = [i for i, tag in enumerate(srl_result['tags']) if tag != 'O']
-				text_piece = ' '.join(text_piece_tokens)
-				srl2gold = nom_srl2gold if srl_result['predicate_type'] == 'nom' else verb_srl2gold
-				context_tokens = text_piece_tokens
+				try:
+					srl_result = srl_id_results[srl_id]
+					srl_tokens = srl_result['words']
+					text_piece_tokens = [srl_tokens[i] for i, tag in enumerate(srl_result['tags']) if tag != 'O']
+					text_piece_token_ids = [i for i, tag in enumerate(srl_result['tags']) if tag != 'O']
+					text_piece = ' '.join(text_piece_tokens)
+					srl2gold = nom_srl2gold if srl_result['predicate_type'] == 'nom' else verb_srl2gold
+					context_tokens = text_piece_tokens
+				except IndexError:
+					continue
 			else:
 				context_tokens = tokens_gold
 
@@ -363,17 +367,29 @@ class EventDetector():
 		context_tensor, context_bert_tokens, goldid_2_bertid, bertid_2_goldid = span_utils.gold_to_bert_tokens(self.QA_tokenizer, context_tokens, self.QA_model_type)
 		context_len = len(context_bert_tokens)
 
-		input_tensor = torch.cat((question_tensor, context_tensor), 1).to('cuda:0')
+
+
+		if self.gpu_devices:
+			input_tensor = torch.cat((question_tensor, context_tensor), 1).to('cuda:0')
+		else:
+			input_tensor = torch.cat((question_tensor, context_tensor), 1)
 		input_ids = input_tensor.tolist()[0]
 		bert_tokens = question_tokens + context_bert_tokens
 
 		# Deal with BERT-based models and other models separately
 		if self.QA_model_type in span_utils.bert_type_models:
-			token_type_ids = torch.tensor([0] * question_len + [1] * context_len)
-			token_type_ids = torch.unsqueeze(token_type_ids, 0).to('cuda:0')
 
-			attention_mask = torch.tensor([1] * (question_len + context_len)).to('cuda:0')
-			attention_mask = torch.unsqueeze(attention_mask, 0).to('cuda:0')
+			token_type_ids = torch.tensor([0] * question_len + [1] * context_len)
+
+			if self.gpu_devices:
+				token_type_ids = torch.unsqueeze(token_type_ids, 0).to('cuda:0')
+				attention_mask = torch.tensor([1] * (question_len + context_len)).to('cuda:0')
+				attention_mask = torch.unsqueeze(attention_mask, 0).to('cuda:0')
+			else:
+				token_type_ids = torch.unsqueeze(token_type_ids, 0)
+				attention_mask = torch.tensor([1] * (question_len + context_len))
+				attention_mask = torch.unsqueeze(attention_mask, 0)
+
 
 			input_dict = {'input_ids': input_tensor,
 			              'token_type_ids': token_type_ids,
