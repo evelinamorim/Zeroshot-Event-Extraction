@@ -1,10 +1,10 @@
 {
-    "use_gpu": true,
-    "gpu_devices": "0",
+    "use_gpu": false,
+    "gpu_devices": "-1",
 
-    "root_dir": "/shared/lyuqing/Zeroshot-Event-Extraction",
-    "transformers_cache_dir": "/shared/.cache/transformers",
-    "input_dir": "['data/ACE_converted', 'data/ERE_converted'][0]",
+    "root_dir": "/home/evelinamorim/UPorto/zero-shot-participant/Zeroshot-Event-Extraction",
+    "transformers_cache_dir": "/tmp/cache_transformers",
+    "input_dir": "['data/ACE_converted'][0]",
     "split": "['train', 'dev', 'test', 'all'][1]",
 
     "setting": "['scratch', 'gold_TI', 'gold_TI+TC'][2]",

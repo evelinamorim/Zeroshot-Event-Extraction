@@ -23,7 +23,8 @@ from nltk import (sent_tokenize as sent_tokenize_,
 
 
 # repo root dir; change to your own
-root_dir = "/shared/lyuqing/Zeroshot-Event-Extraction"
+#root_dir = "/shared/lyuqing/Zeroshot-Event-Extraction"
+root_dir = "/home/evelinamorim/UPorto/zero-shot-participant/Zeroshot-Event-Extraction/"
 os.chdir(root_dir)
 
 
