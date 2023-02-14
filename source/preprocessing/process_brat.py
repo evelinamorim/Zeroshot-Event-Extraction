@@ -77,10 +77,11 @@ def read_txt_file(path: str,
         offset_start = 0
 
         for sent in doc.sents:
-            offset_end = offset_start + len(sent.text)
-            sentences.append([sent.text, offset_start, offset_end])
-            offset_start = offset_end + 1
-
+            if len(sent) > 0:
+                offset_start = sent[0].idx
+                offset_end = offset_start + len(sent.text.lstrip())
+                sentences.append([sent.text, offset_start, offset_end])
+                
 
     return sentences
 
@@ -427,6 +428,7 @@ def create_participant(part_id, part_tok_lst):
     entity_id = part_id
     mention_id = part_id
 
+
     attr_type, attr_map = part_tok_lst[0].attr[0]
     if "Participant_Type_Domain" in attr_map:
         entity_type = attr_map["Participant_Type_Domain"]
@@ -436,10 +438,12 @@ def create_participant(part_id, part_tok_lst):
         entity_type, entity_subtype, mention_type = "", "", ""
 
     tok_txt_lst = [tok_part.text for tok_part in part_tok_lst]
+
     text = join_tokens(tok_txt_lst)
 
     start = part_tok_lst[0].offset
     end = start + len(text)
+
     return Entity(start, end, text,
                   entity_id, mention_id, entity_type,
                     entity_subtype, mention_type)
@@ -463,11 +467,13 @@ def create_event(event_id, event_tok_lst):
     trigger_start = event_tok_lst[0].offset
     trigger_end = trigger_start + len(trigger_text)
 
+    #print("-->", trigger_text, trigger_start, trigger_end)
+
 
     return Event(event_id, mention_id,
                 event_type, event_subtype,
                 Span(trigger_start,
-                    trigger_end + 1, trigger_text))
+                    trigger_end, trigger_text))
 
 def read_ann_file(path: str,
                   time_and_val: bool = False
@@ -646,7 +652,6 @@ def tokenize(sentence: Tuple[str, int, int],
 
     text, start, end = sentence
     text = mask_escape(text)
-    
 
     # split the sentence into chunks
     splits = {0, len(text)}
@@ -706,6 +711,7 @@ def convert(txt_file: str,
     doc_id, source, entities, relations, events = read_ann_file(
         ann_file, time_and_val=time_and_val)
 
+
     # Process entities, relations, and events
     sentence_entities = process_entities(entities, sentences)
     sentence_relations = process_relation(
@@ -716,6 +722,7 @@ def convert(txt_file: str,
     sentence_tokens = [tokenize(s, ent, evt, language=language) for s, ent, evt
                        in zip(sentences, sentence_entities, sentence_events)]
 
+  
 
     # Convert span character offsets to token indices
     sentence_objs = []
