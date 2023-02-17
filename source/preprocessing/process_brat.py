@@ -53,6 +53,21 @@ def unmask_escape(text: str) -> str:
     """
     return text.replace('ҪҪҪҪҪ', '&amp;').replace('ҚҚҚҚ', '&lt;').replace('ҺҺҺҺ', '&gt;')
 
+
+def recover_escape(text: str) -> str:
+    """Converts named character references in the given string to the corresponding
+    Unicode characters. I didn't notice any numeric character references in this
+    dataset.
+
+    Args:
+        text (str): text to unescape.
+    
+    Returns:
+        str: unescaped string.
+    """
+    return text.replace('&amp;', '&').replace('&lt;', '<').replace('&gt;', '>')
+
+
 def read_txt_file(path: str,
                   language: str = 'english') -> List[Tuple[str, int, int]]:
     """Reads a ANN text file.
@@ -788,7 +803,7 @@ def convert_batch(input_path: str,
             ann_file = txt_file.replace('.txt', '.ann')
             doc = convert(txt_file, ann_file, time_and_val=time_and_val,
                           language=language)
-            #w.write(json.dumps(doc.to_dict()) + '\n')
+            w.write(json.dumps(doc.to_dict()) + '\n')
     progress.close()
 
 
