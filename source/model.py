@@ -41,6 +41,8 @@ class EventDetector():
 			dataset = "ACE"
 		elif "ERE" in input_dir:
 			dataset = "ERE"
+		elif "LUSA" in input_dir:
+			dataset = "LUSA"
 		else:
 			raise ValueError("Unknown dataset")
 		input_file = f"{input_dir}/{split}.event.json"
@@ -99,6 +101,7 @@ class EventDetector():
 
 
 		print(f'Loading TE model...')
+		# textual entaiment mode (TE model)
 		if self.gpu_devices:
 			self.TE_model = AutoModelForSequenceClassification.from_pretrained(self.TE_model_name,
 																			   cache_dir=self.transformers_cache_dir).to('cuda:0')

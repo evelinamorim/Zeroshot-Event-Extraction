@@ -4,7 +4,7 @@
 
     "root_dir": "/home/evelinamorim/UPorto/zero-shot-participant/Zeroshot-Event-Extraction",
     "transformers_cache_dir": "/tmp/cache_transformers",
-    "input_dir": "['data/ACE_converted'][0]",
+    "input_dir": "['data/LUSA_converted'][0]",
     "split": "['train', 'dev', 'test', 'all'][1]",
 
     "setting": "['scratch', 'gold_TI', 'gold_TI+TC'][2]",
@@ -13,9 +13,9 @@
     "TE_model_type": "['bert', 'bertl', 'roberta', 'robertal', 'bartl'][3]",
     "srl_consts": "[['V'], ['V','ARG0','ARG1','ARG2'], ['all']][1]",
     "trg_thresh": "[0.80, 0.85, 0.90, 0.95, 0.99][-1]",
-    "trg_probe_type": "['topical', 'natural', 'exist'][0]",
+    "trg_probe_type": "['class'][0]",
 
-    "QA_model": "veronica320/QA-for-Event-Extraction",
+    "QA_model": "pierreguillou/t5-base-qa-squad-v1.1-portuguese",
     "QA_model_type": "['bert', 'bertl', 'roberta', 'robertal', 'bartl'][3]",
     "arg_thresh": "[0.0, 0.900, 0.95, 0.99][0]",
     "arg_probe_type":"['static', 'contextualized'][1]",

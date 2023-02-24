@@ -3,7 +3,7 @@ from configuration import Config
 
 # repo root dir; change to your own
 #root_dir = "/shared/lyuqing/Zeroshot-Event-Extraction"
-root_dir = "/home/evelinamorim/UPorto/zero-shot-participant/Zeroshot-Event-Extraction/"
+root_dir = "/home/evelinamorim/UPorto/zero-shot-participant/zeroshot-pt/Zeroshot-Event-Extraction/"
 os.chdir(root_dir)
 
 # config
@@ -19,7 +19,7 @@ from data import IEDataset
 from utils.datareader import generate_vocabs
 from pprint import pprint
 from scorer import score_graphs
-
+import sys
 
 ## Config
 # dirs
@@ -30,6 +30,9 @@ if "ACE" in input_dir:
 	dataset = "ACE"
 elif "ERE" in input_dir:
 	dataset = "ERE"
+elif "LUSA" in input_dir:
+	dataset = "LUSA"
+
 
 # eval settings
 setting = eval(config.setting)
@@ -39,6 +42,7 @@ TE_model = config.TE_model.split('/')[-1]
 srl_consts = eval(config.srl_consts)
 trg_thresh = eval(config.trg_thresh)
 trg_probe_type = eval(config.trg_probe_type)
+
 
 # QA-related config
 QA_model = config.QA_model.split('/')[-1]
@@ -60,6 +64,8 @@ output_file = f"{output_dir}/{split}_{setting}_" \
 print(f'Model config: {output_file}')
 
 model = EventDetector(config)
+import pdb
+pdb.set_trace()
 model.load_models()
 
 input_dataset = IEDataset(input_file)
